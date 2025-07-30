@@ -13,7 +13,7 @@ internal class GetProductByIdQueryHandler(IProductRepository productRepository) 
 
         var model = new ProductModel
         {
-            Id = product.Id,
+            Id = product.Id!.Value,
             Name = product.Name,
             Price = product.Price,
             Description = product.Description
