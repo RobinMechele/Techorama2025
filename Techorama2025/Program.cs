@@ -36,9 +36,8 @@ app.MapControllers();
 using (var scope = app.Services.CreateScope())
 {
     var dbContext = scope.ServiceProvider.GetRequiredService<MyDbContext>();
-    // Ensure the database is created and apply migrations
+    // Ensure the database is created 
     dbContext.Database.EnsureCreated();
-    dbContext.Database.Migrate();
 }
 #endif
 

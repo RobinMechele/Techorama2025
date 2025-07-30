@@ -1,5 +1,4 @@
 ﻿using Domain;
-using System.Globalization;
 using System.Net.Http.Json;
 using Techorama2025.Products.Requests;
 
