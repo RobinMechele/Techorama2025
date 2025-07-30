@@ -10,7 +10,7 @@ internal class ProductRepository(MyDbContext dbContext) : IProductRepository
         => dbContext.Products
             .FirstOrDefaultAsync(p => p.Id == productId, cancellationToken);
 
-    public async Task SaveAsync(Product product, CancellationToken cancellationToken = default)
+    public async Task<int> SaveAsync(Product product, CancellationToken cancellationToken = default)
     {
         if (product.Id is null)
         {
@@ -20,6 +20,13 @@ internal class ProductRepository(MyDbContext dbContext) : IProductRepository
         {
             dbContext.Products.Update(product);
         }
+        await dbContext.SaveChangesAsync(cancellationToken);
+        return product.Id ?? throw new InvalidOperationException("Product ID cannot be null after saving.");
+    }
+
+    public async Task DeleteAsync(int productId, CancellationToken cancellationToken = default)
+    {
+        dbContext.Products.Remove(new Product { Id = productId });
         await dbContext.SaveChangesAsync(cancellationToken);
     }
 }

@@ -10,7 +10,6 @@ public sealed class DatabaseFixture : IAsyncLifetime
 
     internal HttpClient Client { get; private set; } = null!;
 
-
     public async ValueTask InitializeAsync()
     {
         _dbContainer = new MsSqlBuilder().Build();
