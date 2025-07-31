@@ -4,7 +4,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Dal.Products;
 
-internal class ProductRepository(MyDbContext dbContext) : IProductRepository
+internal sealed class ProductRepository(MyDbContext dbContext) : IProductRepository
 {
     public Task<Product?> GetProductByIdAsync(int productId, CancellationToken cancellationToken = default)
         => dbContext.Products
@@ -29,4 +29,8 @@ internal class ProductRepository(MyDbContext dbContext) : IProductRepository
         dbContext.Products.Remove(new Product { Id = productId });
         await dbContext.SaveChangesAsync(cancellationToken);
     }
+
+    public Task<int> CountAsync(CancellationToken cancellationToken = default)
+        => dbContext.Products
+            .CountAsync(cancellationToken);
 }

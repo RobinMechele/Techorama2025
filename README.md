@@ -41,12 +41,17 @@ In order to make it easier to mock, you use the repository pattern, which allows
 
 
 ### Using test containers
-Now, the session was heavily focused on unit testing with testcontainers, but knowing that not everyone has the same setup for databases (seperate code structure, Database first instead of Code first, etc.), I wanted a proof of concept on isolating integration tests with an actual database - where every test can run in isolation and does not depend on the state of the database.
+There are two different tests i've created in this repository. The first one is a copy of what was demonstrated during the session.
+There are slow tests - so showing how simple it is to create unit tests using testcontainers with an actual database.
 
-I'm using the testcontainers library to create a containerized SQL Server instance for each test run. This allows me to have a fresh database for each test, ensuring that tests do not interfere with each other and that the database state is consistent. I've also setup the api using WebApplicationFactory, which allows me to create an in-memory server that can be used to test the API endpoints without needing to run the actual application. This ensures that i can create tests using the API endpoints without needing to run the actual application, which can be useful for testing the API in isolation.
+The FastReadonlyTests are to show how you can resolve the speed issues with using fixtures (class/collection/assembly) to improve the execution speed where isolation is still present.
+The WriteTests shows how you can reach a level of isolation where you use transactional behaviour. Relational databases are a champion in this, so we use their functionality.
 
-Now, he mentions that you can use transactions and roll them back after each test, but that is not always the best solution. Databases save their stuff once you commit the transaction, so if you insert something and it works perfectly without transactions, you could get some issues when you have it running in your production code, where transactions actually occur. Usually happens when you have tables that are deferred or when you have triggers that are executed after the commit. So, I prefer to use a fresh database for each test run, which ensures that the database state is consistent and that tests do not interfere with each other.
+However - bonus round - these examples only show you how to test with the DbContext directly. But that makes no sense in a real-world application, where you would use repositories to abstract the database interactions.
+So, I've also made the ProductRepositoryTests, which show how you can use the repository pattern to test your application with testcontainers.
+
+The next subset is integration tests, where you need to think more in a sense that transactions actually occur. So you need to think about how you write the tests, so that they have no relation to eachother.
 
 ### Improvements with this repository
-In the tests, I need to call the Client that I've created in the WebApplicationFactory to get the API client. This could be somewhat annoying, as you have to define the path inside the test itself. This could be improved by using HttpClient generation like Nswag or Refit, which would allow you to define the API client in a more structured way and avoid hardcoding the paths in the tests.
+In the integration tests tests, I need to call the Client that I've created in the WebApplicationFactory to get the API client. This could be somewhat annoying, as you have to define the path inside the test itself. This could be improved by using HttpClient generation like Nswag or Refit, which would allow you to define the API client in a more structured way and avoid hardcoding the paths in the tests.
 Furthermore, that same client could be used for your client itself (either also in C# code or a different language) to ensure that the API client is consistent across your application and tests.
